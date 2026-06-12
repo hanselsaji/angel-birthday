@@ -1,0 +1,598 @@
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Happy Birthday Angel 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: 'Inter', sans-serif;
+  background: #fdf6f0;
+  height: 100%; width: 100%;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- PAGES ---- */
+.page {
+  display: none;
+  position: fixed; inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.page.active { display: block; animation: fadeIn 0.5s ease; }
+#p1.active, #p5.active {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- MUSIC BUTTON ---- */
+#musicBtn {
+  position: fixed; bottom: 20px; right: 20px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(232,105,138,0.9);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; z-index: 999;
+  box-shadow: 0 4px 16px rgba(232,105,138,0.35);
+  transition: transform 0.2s;
+  touch-action: manipulation;
+}
+#musicBtn:active { transform: scale(0.93); }
+#musicBtn.playing { animation: musicPulse 1.5s ease-in-out infinite; }
+@keyframes musicPulse {
+  0%,100% { box-shadow: 0 4px 16px rgba(232,105,138,0.35); }
+  50%      { box-shadow: 0 4px 28px rgba(232,105,138,0.7); }
+}
+
+/* ---- SPARKLES ---- */
+.sparkles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.sparkle {
+  position: absolute; width: 7px; height: 7px;
+  border-radius: 50%; opacity: 0;
+  animation: floatUp var(--dur) ease-in-out var(--delay) infinite;
+}
+@keyframes floatUp {
+  0%  { opacity: 0; transform: translateY(0) scale(0.5); }
+  40% { opacity: 0.8; }
+  100%{ opacity: 0; transform: translateY(-160px) scale(1.3); }
+}
+
+/* ---- PAGE 1 ---- */
+#p1 {
+  background: linear-gradient(160deg, #fff5f8 0%, #fde8f0 50%, #fdf0e0 100%);
+  text-align: center; padding: 2rem 1.5rem; min-height: 100vh;
+}
+.p1-inner { position: relative; z-index: 1; max-width: 400px; width: 100%; }
+.ribbon {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 13px; color: #e0799a; letter-spacing: 2px;
+  margin-bottom: 1.5rem; opacity: 0;
+  animation: slideUp 0.9s ease 0.3s forwards;
+}
+.big-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 14vw, 68px); font-weight: 600;
+  color: #2d1a2e; line-height: 1.1;
+  opacity: 0; animation: slideUp 0.9s ease 0.6s forwards;
+}
+.tagline {
+  font-size: clamp(14px, 4vw, 16px); color: #8a6070;
+  margin-top: 1.2rem; line-height: 1.8;
+  opacity: 0; animation: slideUp 0.9s ease 0.9s forwards;
+}
+.btn-cta {
+  display: inline-block; margin-top: 2.5rem;
+  padding: 15px 42px; background: #e8698a; color: white;
+  border: none; border-radius: 50px; font-size: 15px; font-weight: 500;
+  cursor: pointer; letter-spacing: 0.5px;
+  opacity: 0; animation: slideUp 0.9s ease 1.2s forwards;
+  transition: background 0.2s; touch-action: manipulation; -webkit-appearance: none;
+}
+.btn-cta:active { background: #d45578; transform: scale(0.97); }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- NAV ---- */
+.nav-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.25rem 1.25rem 0.75rem;
+  position: sticky; top: 0; z-index: 10;
+}
+.page-label { font-size: 12px; color: #c09090; letter-spacing: 1px; }
+.nav-btns { display: flex; gap: 8px; }
+.nbtn {
+  padding: 9px 20px; border-radius: 50px;
+  border: 1.5px solid #f0c0d0; background: white;
+  color: #e8698a; font-size: 13px; font-weight: 500;
+  cursor: pointer; touch-action: manipulation; -webkit-appearance: none;
+}
+.nbtn:active { background: #fde8f0; }
+.nbtn.fill { background: #e8698a; color: white; border-color: #e8698a; }
+.nbtn.fill:active { background: #d45578; }
+
+/* ---- SECTION LABELS ---- */
+.eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #e0799a; margin-bottom: 0.4rem; }
+.sec-h { font-family: 'Playfair Display', serif; font-size: clamp(24px, 7vw, 30px); color: #2d1a2e; }
+
+/* ---- PAGE 2: PHOTOS ---- */
+#p2 { background: #fff9f5; }
+.p2-head { padding: 0.25rem 1.25rem 0.75rem; }
+
+.photo-scroll {
+  display: flex; gap: 14px; overflow-x: auto;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  padding: 0.5rem 1.25rem 0.75rem; scrollbar-width: none;
+}
+.photo-scroll::-webkit-scrollbar { display: none; }
+
+.photo-card {
+  flex: 0 0 min(230px, 62vw); height: min(300px, 75vw);
+  scroll-snap-align: center; border-radius: 18px;
+  overflow: hidden; position: relative;
+  box-shadow: 0 6px 24px rgba(200,100,130,0.15);
+  background: #fde8f0;
+}
+.photo-card img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 20%; display: block;
+}
+.photo-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(45,26,46,0.78));
+  color: white; font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 13px;
+  padding: 2rem 0.9rem 0.75rem;
+}
+.photo-ph {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+}
+
+/* ---- VIDEO CARD ---- */
+.video-card {
+  flex: 0 0 min(230px, 62vw); height: min(300px, 75vw);
+  scroll-snap-align: center; border-radius: 18px;
+  overflow: hidden; position: relative;
+  box-shadow: 0 6px 24px rgba(200,100,130,0.2);
+  background: #2d1a2e; flex-shrink: 0;
+}
+.video-card video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.video-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(transparent 40%, rgba(45,26,46,0.7));
+  display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 0.75rem 0.9rem;
+}
+.video-play-btn {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -60%);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  border: none; cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  touch-action: manipulation;
+}
+.video-caption {
+  color: white; font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 13px;
+}
+
+.dots { display: flex; justify-content: center; gap: 7px; padding: 0.4rem 0 0.75rem; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #e0c0cc; transition: all 0.3s; }
+.dot.on { background: #e8698a; width: 18px; border-radius: 3px; }
+
+.word-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0 1.25rem 1.5rem; }
+.pill { padding: 7px 18px; border-radius: 50px; font-size: 13px; font-weight: 500; }
+
+/* ---- PAGE 3: TIMELINE ---- */
+#p3 { background: #fdf6f0; }
+.p3-inner { padding: 0.25rem 1.25rem 2.5rem; }
+.timeline { position: relative; padding-left: 0.25rem; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 19px; top: 0; bottom: 0; width: 1.5px;
+  background: linear-gradient(to bottom, #f9a8c9, #ffd0a0, #f9a8c9);
+}
+.t-item {
+  display: flex; gap: 14px; margin-bottom: 1.4rem;
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.t-item.show { opacity: 1; transform: translateX(0); }
+.t-icon {
+  flex: 0 0 40px; height: 40px; border-radius: 50%;
+  background: white; border: 2px solid #f9a8c9;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; position: relative; z-index: 1;
+}
+.t-body {
+  background: white; border-radius: 16px;
+  padding: 0.8rem 1rem; flex: 1;
+  box-shadow: 0 2px 14px rgba(200,100,130,0.09);
+}
+.t-when { font-size: 11px; color: #e0799a; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.t-text { font-size: 14px; color: #4a2a3a; line-height: 1.6; }
+
+/* ---- PAGE 4: LETTER ---- */
+#p4 { background: linear-gradient(160deg, #fff5f8 0%, #fdf0e0 100%); }
+.p4-inner { padding: 0.25rem 1.25rem 2.5rem; }
+.letter-wrap {
+  background: white; border-radius: 20px;
+  padding: 1.75rem 1.4rem;
+  box-shadow: 0 8px 40px rgba(200,100,130,0.12);
+  position: relative; overflow: hidden;
+}
+.letter-wrap::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, #f9a8c9, #ffd0a0);
+}
+.letter-to {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 21px; color: #e8698a; margin-bottom: 1.2rem;
+}
+.letter-body {
+  font-size: clamp(14px, 4vw, 15px); color: #4a2a3a;
+  line-height: 1.95; font-family: 'Georgia', serif;
+}
+.letter-body p { margin-bottom: 1rem; }
+.letter-body p:last-child { margin-bottom: 0; }
+.letter-sign {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 19px; color: #e8698a; margin-top: 1.5rem;
+}
+
+/* ---- PAGE 5: FINALE ---- */
+#p5 {
+  background: linear-gradient(160deg, #ffe0ec 0%, #ffd0a0 100%);
+  text-align: center; padding: 2rem 1.5rem; min-height: 100vh;
+}
+.confetti-field { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.cp {
+  position: absolute; opacity: 0;
+  animation: fall var(--dur) ease var(--delay) infinite;
+}
+@keyframes fall {
+  0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(110vh) rotate(720deg) scale(0.4); }
+}
+.finale-inner { position: relative; z-index: 1; max-width: 380px; width: 100%; }
+.cake-emoji {
+  font-size: clamp(52px, 15vw, 72px); display: block; margin-bottom: 1rem;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+.finale-main {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 10vw, 54px); font-weight: 600;
+  color: #2d1a2e; line-height: 1.15;
+  animation: pop 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.finale-date { font-size: 13px; color: #7a4060; letter-spacing: 1px; margin-top: 0.75rem; }
+.finale-from {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(16px, 4.5vw, 19px); color: #c84070;
+  margin-top: 1.75rem; line-height: 1.8;
+}
+.btn-restart {
+  display: inline-block; margin-top: 2rem; padding: 12px 28px;
+  border-radius: 50px; border: 1.5px solid rgba(200,100,130,0.4);
+  background: rgba(255,255,255,0.6); color: #c84070;
+  font-size: 13px; cursor: pointer; touch-action: manipulation; -webkit-appearance: none;
+}
+.btn-restart:active { background: rgba(255,255,255,0.9); }
+</style>
+</head>
+<body>
+
+<!-- MUSIC -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+<button id="musicBtn" onclick="toggleMusic()" title="Music">🎵</button>
+
+<!-- SPARKLES -->
+<div class="sparkles" id="sparkles"></div>
+
+<!-- PAGE 1 -->
+<div class="page active" id="p1">
+  <div class="p1-inner">
+    <div class="ribbon">June 13, 2005 &mdash; a star arrived</div>
+    <div class="big-name">Happy<br>Birthday<br>Angel</div>
+    <div class="tagline">You came into this world loud, bright, and entirely impossible to ignore. This is for you.</div>
+    <button class="btn-cta" onclick="go(2); startMusic()">Open your gift &rarr;</button>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="p2">
+  <div class="nav-bar" style="background:#fff9f5">
+    <span class="page-label">02 &middot; 05</span>
+    <div class="nav-btns">
+      <button class="nbtn" onclick="go(1)">&larr;</button>
+      <button class="nbtn fill" onclick="go(3)">next &rarr;</button>
+    </div>
+  </div>
+  <div class="p2-head">
+    <div class="eyebrow">look at you</div>
+    <div class="sec-h">Every frame, perfect.</div>
+  </div>
+  <div class="photo-scroll" id="photoScroll">
+    <div class="photo-card">
+      <img src="photo1.jpg" alt="Us" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-ph" style="display:none">🥰</div>
+      <div class="photo-caption">You &amp; me, always</div>
+    </div>
+    <div class="photo-card">
+      <img src="photo2.jpg" alt="Together" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-ph" style="display:none">😂</div>
+      <div class="photo-caption">That laugh — unforgettable</div>
+    </div>
+    <div class="photo-card">
+      <img src="photo3.jpg" alt="Close" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-ph" style="display:none">🫂</div>
+      <div class="photo-caption">My favourite human</div>
+    </div>
+    <div class="photo-card">
+      <img src="photo4.jpg" alt="Her" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-ph" style="display:none">💛</div>
+      <div class="photo-caption">The one who changed everything</div>
+    </div>
+    <!-- VIDEO CARD -->
+    <div class="video-card" id="videoCard">
+      <video id="memoryVideo" src="sleeping.mp4" playsinline webkit-playsinline muted loop preload="metadata"></video>
+      <div class="video-overlay">
+        <div class="video-caption">My favourite moment 🤍</div>
+      </div>
+      <button class="video-play-btn" id="playBtn" onclick="toggleVideo()">▶</button>
+    </div>
+  </div>
+  <div class="dots" id="dots">
+    <div class="dot on"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+  <div class="word-pills">
+    <span class="pill" style="background:#fde8f0;color:#c0446a">Loud</span>
+    <span class="pill" style="background:#fdf0e0;color:#c07040">Warm</span>
+    <span class="pill" style="background:#e8f4fd;color:#3070c0">Real</span>
+    <span class="pill" style="background:#edfde8;color:#308040">Strong</span>
+    <span class="pill" style="background:#f5e8fd;color:#8040c0">Mine</span>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="p3">
+  <div class="nav-bar" style="background:#fdf6f0">
+    <span class="page-label">03 &middot; 05</span>
+    <div class="nav-btns">
+      <button class="nbtn" onclick="go(2)">&larr;</button>
+      <button class="nbtn fill" onclick="go(4)">next &rarr;</button>
+    </div>
+  </div>
+  <div class="p3-inner">
+    <div class="eyebrow">our story</div>
+    <div class="sec-h" style="margin-bottom:1.5rem">How we got here.</div>
+    <div class="timeline" id="timeline">
+      <div class="t-item">
+        <div class="t-icon">🌸</div>
+        <div class="t-body">
+          <div class="t-when">Jan 15, 2024</div>
+          <div class="t-text">It started. Us, officially. The day everything got a little more interesting.</div>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-icon">📞</div>
+        <div class="t-body">
+          <div class="t-when">The calls</div>
+          <div class="t-text">Your voice on the phone — loud, chaotic, exactly what I needed after every hard day.</div>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-icon">🤝</div>
+        <div class="t-body">
+          <div class="t-when">The fights</div>
+          <div class="t-text">We fight more than most couples. I miss you the second each one ends. That says everything.</div>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-icon">🌍</div>
+        <div class="t-body">
+          <div class="t-when">Right now</div>
+          <div class="t-text">Distance between us. Still here. Still choosing you. Always.</div>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-icon">✨</div>
+        <div class="t-body">
+          <div class="t-when">What's ahead</div>
+          <div class="t-text">Every city, every argument, every quiet moment. Everything we haven't done yet. All of it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="p4">
+  <div class="nav-bar" style="background:transparent">
+    <span class="page-label">04 &middot; 05</span>
+    <div class="nav-btns">
+      <button class="nbtn" onclick="go(3)">&larr;</button>
+      <button class="nbtn fill" onclick="go(5)">almost there &rarr;</button>
+    </div>
+  </div>
+  <div class="p4-inner">
+    <div class="eyebrow">a letter</div>
+    <div class="sec-h" style="margin-bottom:1.2rem">From me. For you.</div>
+    <div class="letter-wrap">
+      <div class="letter-to">Hey cutiee 👒</div>
+      <div class="letter-body">
+        <p>I love you, Angel. Even with all the fights — maybe especially because of them. I miss you after every single one. That never changes.</p>
+        <p>Your extroverted energy is contagious in the best way. You pull me out of my own head without even trying. You make me stop caring what the world thinks. Don't lose that. That's you. Protect it.</p>
+        <p>Your loudness, your happiness, your calls — they're my relief. More than you probably know.</p>
+        <p>Be my strong, independent woman. Always. Don't shrink. Don't quiet down. The world needs the full version of you.</p>
+        <p>I'm sorry I can't be there today. But I'm here. I'm always here.</p>
+      </div>
+      <div class="letter-sign">&mdash; Hansel</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="p5">
+  <div class="confetti-field" id="confettiField"></div>
+  <div class="finale-inner">
+    <span class="cake-emoji">🎂</span>
+    <div class="finale-main">Happy Birthday,<br>Angel.</div>
+    <div class="finale-date">June 13, 2005 &mdash; 21 years of you</div>
+    <div class="finale-from">You are loud.<br>You are warm.<br>You are everything.<br><br>I love you.</div>
+    <button class="btn-restart" onclick="go(1)">&larr; from the start</button>
+  </div>
+</div>
+
+<script>
+var cur = 1;
+var musicStarted = false;
+var videoPlaying = false;
+
+function go(n) {
+  document.getElementById('p' + cur).classList.remove('active');
+  cur = n;
+  var pg = document.getElementById('p' + n);
+  pg.classList.add('active');
+  pg.scrollTop = 0;
+  if (n === 3) animTimeline();
+  if (n === 5) launchConfetti();
+  if (n !== 2) pauseVideo();
+}
+
+/* ---- MUSIC ---- */
+var music = document.getElementById('bgMusic');
+function startMusic() {
+  if (musicStarted) return;
+  music.volume = 0.45;
+  music.play().then(function() {
+    musicStarted = true;
+    document.getElementById('musicBtn').classList.add('playing');
+    document.getElementById('musicBtn').textContent = '🎵';
+  }).catch(function(){});
+}
+function toggleMusic() {
+  if (music.paused) {
+    music.play();
+    document.getElementById('musicBtn').classList.add('playing');
+    document.getElementById('musicBtn').textContent = '🎵';
+  } else {
+    music.pause();
+    document.getElementById('musicBtn').classList.remove('playing');
+    document.getElementById('musicBtn').textContent = '🔇';
+  }
+}
+
+/* ---- VIDEO ---- */
+var vid = document.getElementById('memoryVideo');
+function toggleVideo() {
+  var btn = document.getElementById('playBtn');
+  if (vid.paused) {
+    vid.muted = false;
+    vid.play();
+    videoPlaying = true;
+    btn.textContent = '⏸';
+    // duck music
+    if (!music.paused) music.volume = 0.1;
+  } else {
+    vid.pause();
+    videoPlaying = false;
+    btn.textContent = '▶';
+    if (!music.paused) music.volume = 0.45;
+  }
+}
+function pauseVideo() {
+  if (vid && !vid.paused) {
+    vid.pause();
+    videoPlaying = false;
+    var btn = document.getElementById('playBtn');
+    if (btn) btn.textContent = '▶';
+    if (!music.paused) music.volume = 0.45;
+  }
+}
+
+/* ---- TIMELINE ---- */
+function animTimeline() {
+  var items = document.querySelectorAll('.t-item');
+  items.forEach(function(el) { el.classList.remove('show'); });
+  items.forEach(function(el, i) {
+    setTimeout(function() { el.classList.add('show'); }, i * 180 + 80);
+  });
+}
+
+/* ---- CONFETTI ---- */
+function launchConfetti() {
+  var field = document.getElementById('confettiField');
+  field.innerHTML = '';
+  var cols = ['#f9a8c9','#ffd0a0','#c0e0ff','#d0f0c0','#f0d0ff','#ffe0a0'];
+  for (var i = 0; i < 60; i++) {
+    var el = document.createElement('div');
+    el.className = 'cp';
+    var size = 6 + Math.random() * 9;
+    el.style.left = (Math.random() * 100) + '%';
+    el.style.top = (-8 - Math.random() * 10) + '%';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.background = cols[i % cols.length];
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    el.style.setProperty('--dur', (2 + Math.random() * 3) + 's');
+    el.style.setProperty('--delay', (Math.random() * 2.5) + 's');
+    field.appendChild(el);
+  }
+}
+
+/* ---- SPARKLES ---- */
+var sc = document.getElementById('sparkles');
+['#f9a8c9','#ffd0a0','#d0d0ff'].forEach(function(col) {
+  for (var i = 0; i < 8; i++) {
+    var s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.top = (30 + Math.random() * 70) + '%';
+    s.style.background = col;
+    s.style.setProperty('--dur', (2 + Math.random() * 3) + 's');
+    s.style.setProperty('--delay', (Math.random() * 3) + 's');
+    sc.appendChild(s);
+  }
+});
+
+/* ---- SCROLL DOTS ---- */
+var scroller = document.getElementById('photoScroll');
+var dots = document.querySelectorAll('.dot');
+if (scroller) {
+  scroller.addEventListener('scroll', function() {
+    var cardW = (scroller.querySelector('.photo-card') || scroller.querySelector('.video-card')).offsetWidth + 14;
+    var idx = Math.round(scroller.scrollLeft / cardW);
+    dots.forEach(function(d, i) { d.classList.toggle('on', i === idx); });
+  });
+}
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done"
