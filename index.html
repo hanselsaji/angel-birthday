@@ -335,8 +335,7 @@ html, body {
   </div>
   <div class="photo-scroll" id="photoScroll">
     <div class="photo-card">
-      <img src="photo1.jpg" alt="Us" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="photo-ph" style="display:none">🥰</div>
+      <video src="video1.mp4" autoplay muted loop playsinline webkit-playsinline></video>
       <div class="photo-caption">You &amp; me, always</div>
     </div>
     <div class="photo-card">
@@ -350,17 +349,15 @@ html, body {
       <div class="photo-caption">My favourite human</div>
     </div>
     <div class="photo-card">
-      <img src="photo4.jpg" alt="Her" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="photo-ph" style="display:none">💛</div>
+      <video src="video4.mp4" autoplay muted loop playsinline webkit-playsinline></video>
       <div class="photo-caption">The one who changed everything</div>
     </div>
     <!-- VIDEO CARD -->
     <div class="video-card" id="videoCard">
-      <video id="memoryVideo" src="sleeping.mp4" playsinline webkit-playsinline muted loop preload="metadata"></video>
+      <video id="memoryVideo" src="sleeping.mp4" autoplay playsinline webkit-playsinline muted loop preload="auto"></video>
       <div class="video-overlay">
         <div class="video-caption">My favourite moment 🤍</div>
       </div>
-      <button class="video-play-btn" id="playBtn" onclick="toggleVideo()">▶</button>
     </div>
   </div>
   <div class="dots" id="dots">
@@ -482,7 +479,6 @@ function go(n) {
   pg.scrollTop = 0;
   if (n === 3) animTimeline();
   if (n === 5) launchConfetti();
-  if (n !== 2) pauseVideo();
 }
 
 /* ---- MUSIC ---- */
@@ -505,34 +501,6 @@ function toggleMusic() {
     music.pause();
     document.getElementById('musicBtn').classList.remove('playing');
     document.getElementById('musicBtn').textContent = '🔇';
-  }
-}
-
-/* ---- VIDEO ---- */
-var vid = document.getElementById('memoryVideo');
-function toggleVideo() {
-  var btn = document.getElementById('playBtn');
-  if (vid.paused) {
-    vid.muted = false;
-    vid.play();
-    videoPlaying = true;
-    btn.textContent = '⏸';
-    // duck music
-    if (!music.paused) music.volume = 0.1;
-  } else {
-    vid.pause();
-    videoPlaying = false;
-    btn.textContent = '▶';
-    if (!music.paused) music.volume = 0.45;
-  }
-}
-function pauseVideo() {
-  if (vid && !vid.paused) {
-    vid.pause();
-    videoPlaying = false;
-    var btn = document.getElementById('playBtn');
-    if (btn) btn.textContent = '▶';
-    if (!music.paused) music.volume = 0.45;
   }
 }
 
